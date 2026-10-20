@@ -26,10 +26,14 @@ jobs:
         env:
           GH_PAGES: "1"
       # Deep links like /got/?s=6&e=10 and unknown paths fall back to the app.
-      - run: cp dist/client/index.html dist/client/404.html && touch dist/client/.nojekyll
+      - run: |
+          D=$(dirname "$(ls dist/client/index.html .output/public/index.html 2>/dev/null | head -1)")
+          echo "Static output: $D"
+          mkdir -p site && cp -r "$D"/. site/
+          cp site/index.html site/404.html && touch site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/client
+          path: site
   deploy:
     needs: build
     runs-on: ubuntu-latest
