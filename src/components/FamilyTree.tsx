@@ -27,9 +27,10 @@ export const houseBorder: Record<HouseId, string> = {
   bolton: "border-house-bolton", frey: "border-house-frey", dothraki: "border-house-dothraki",
 };
 
-export function Portrait({ person, className = "" }: { person: TreePerson; className?: string }) {
-  const img = person.charId && !person.unknown && person.house ? portraitFor(person.charId) : undefined;
-  if (person.unknown || !person.house)
+export function Portrait({ person, className = "" }: { person: TreePerson & { group?: string }; className?: string }) {
+  const known = !person.unknown && (!!person.house || !!person.group);
+  const img = person.charId && known ? portraitFor(person.charId) : undefined;
+  if (!known)
     return (
       <div className={`relative flex items-center justify-center bg-unknown ${className}`}>
         <svg viewBox="0 0 100 100" className="h-3/4 w-3/4 fill-muted"><circle cx="50" cy="35" r="20" /><path d="M10 100 C10 65 90 65 90 100 Z" /></svg>
@@ -39,7 +40,7 @@ export function Portrait({ person, className = "" }: { person: TreePerson; class
   if (img) return <img src={img} alt={person.name} loading="lazy" className={`object-cover ${person.dead ? "grayscale" : ""} ${className}`} />;
   return (
     <div className={`flex items-center justify-center bg-secondary ${person.dead ? "grayscale" : ""} ${className}`}>
-      <span className={`font-display text-3xl ${houseText[person.house]}`}>
+      <span className={`font-display text-3xl ${person.house ? houseText[person.house] : "text-primary"}`}>
         {person.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
       </span>
     </div>

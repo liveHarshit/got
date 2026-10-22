@@ -7,7 +7,7 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // GH_PAGES=1 builds a static site served from /got/ (GitHub Pages at liveharshit.in/got).
-const ghPages = process.env.GH_PAGES === "1";
+const ghPages = process.env["GH_PAGES"] === "1";
 
 export default defineConfig({
   tanstackStart: {

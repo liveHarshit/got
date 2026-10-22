@@ -1,0 +1,118 @@
+import { ep } from "./got";
+
+/** Important characters outside the family trees. Same episode rules as CHARACTERS. */
+export interface Figure {
+  id: string;
+  name: string;
+  group: string;
+  first: number;
+  death?: number;
+  title?: string;
+  bio: string;
+}
+
+const o = (id: string, name: string, group: string, first: number, bio: string, extra: Partial<Figure> = {}): Figure =>
+  ({ id, name, group, first, bio, ...extra });
+
+export const FIGURES: Figure[] = [
+  o("varys", "Varys", "Small Council", ep(1, 3), "The Spider, Master of Whisperers, with little birds everywhere.", { death: ep(8, 5) }),
+  o("littlefinger", "Petyr Baelish", "Small Council", ep(1, 3), "Littlefinger, Master of Coin and owner of brothels.", { death: ep(7, 7) }),
+  o("pycelle", "Grand Maester Pycelle", "Small Council", ep(1, 3), "The aged Grand Maester of the Citadel.", { death: ep(6, 10) }),
+  o("barristan", "Barristan Selmy", "Kingsguard", ep(1, 2), "Ser Barristan the Bold, Lord Commander of the Kingsguard.", { death: ep(5, 4) }),
+  o("sandor", "Sandor Clegane", "Kingsguard", 1, "The Hound, Joffrey's scarred sworn shield who hates fire.", { title: "The Hound", death: ep(8, 5) }),
+  o("gregor", "Gregor Clegane", "Kingsguard", ep(1, 4), "The Mountain, a giant knight sworn to the Lannisters.", { title: "The Mountain", death: ep(8, 5) }),
+  o("qyburn", "Qyburn", "Small Council", ep(3, 4), "A disgraced maester with unusual interests.", { death: ep(8, 5) }),
+  o("shae", "Shae", "King's Landing", ep(1, 8), "A camp follower who becomes Tyrion's lover.", { death: ep(4, 10) }),
+  o("bronn", "Bronn", "Sellswords", ep(1, 5), "A sellsword who sells his sword to Tyrion."),
+  o("podrick", "Podrick Payne", "King's Landing", ep(2, 3), "Tyrion's shy, loyal squire."),
+  o("brienne", "Brienne of Tarth", "Knights", ep(2, 3), "A towering warrior from Tarth, sworn to Renly."),
+  o("syrio", "Syrio Forel", "Free Cities", ep(1, 3), "First Sword of Braavos, Arya's dancing master."),
+  o("jaqen", "Jaqen H'ghar", "Faceless Men", ep(2, 2), "A mysterious prisoner who speaks of 'a man'."),
+  o("davos", "Davos Seaworth", "Dragonstone", ep(2, 1), "The Onion Knight, a former smuggler and Stannis's adviser.", { title: "Onion Knight" }),
+  o("melisandre", "Melisandre", "Dragonstone", ep(2, 1), "The Red Woman, a priestess of the Lord of Light.", { death: ep(8, 3) }),
+  o("jorah", "Jorah Mormont", "Daenerys's Court", 1, "An exiled northern knight who serves Daenerys.", { death: ep(8, 3) }),
+  o("missandei", "Missandei", "Daenerys's Court", ep(3, 1), "A gifted interpreter enslaved in Astapor.", { death: ep(8, 4) }),
+  o("greyworm", "Grey Worm", "Daenerys's Court", ep(3, 4), "Commander of the Unsullied.", { title: "Commander" }),
+  o("daario", "Daario Naharis", "Sellswords", ep(3, 8), "A dashing captain of the Second Sons."),
+  o("samwell", "Samwell Tarly", "Night's Watch", ep(1, 4), "A gentle, bookish recruit and Jon's closest friend."),
+  o("aemon", "Maester Aemon", "Night's Watch", ep(1, 3), "The blind old maester of Castle Black.", { death: ep(5, 7) }),
+  o("alliser", "Alliser Thorne", "Night's Watch", ep(1, 3), "Castle Black's harsh master-at-arms.", { death: ep(6, 3) }),
+  o("gilly", "Gilly", "Free Folk", ep(2, 1), "One of Craster's daughters, living beyond the Wall."),
+  o("ygritte", "Ygritte", "Free Folk", ep(2, 6), "A fierce wildling spearwife. 'You know nothing, Jon Snow.'", { death: ep(4, 9) }),
+  o("tormund", "Tormund Giantsbane", "Free Folk", ep(3, 1), "A boisterous wildling leader."),
+  o("mance", "Mance Rayder", "Free Folk", ep(3, 1), "King-Beyond-the-Wall, a former brother of the Watch.", { title: "King-Beyond-the-Wall", death: ep(5, 1) }),
+  o("nightking", "The Night King", "Beyond the Wall", ep(4, 4), "Leader of the White Walkers.", { death: ep(8, 3) }),
+  o("ravenseer", "The Three-Eyed Raven", "Beyond the Wall", ep(4, 10), "An ancient seer living inside a weirwood tree.", { death: ep(6, 5) }),
+  o("hodor", "Hodor", "Winterfell", ep(1, 2), "Winterfell's gentle giant stableboy who only says 'Hodor'.", { death: ep(6, 5) }),
+  o("osha", "Osha", "Winterfell", ep(1, 7), "A wildling woman captured in the Wolfswood.", { death: ep(6, 4) }),
+  o("meera", "Meera Reed", "Winterfell", ep(3, 2), "Daughter of Howland Reed, Bran's protector."),
+  o("jojen", "Jojen Reed", "Winterfell", ep(3, 2), "Meera's brother, who has green dreams.", { death: ep(4, 10) }),
+  o("thoros", "Thoros of Myr", "Brotherhood", ep(3, 3), "A drunken red priest riding with outlaws.", { death: ep(7, 6) }),
+  o("beric", "Beric Dondarrion", "Brotherhood", ep(3, 4), "Leader of the Brotherhood Without Banners.", { death: ep(8, 3) }),
+  o("highsparrow", "The High Sparrow", "Faith", ep(5, 3), "A humble, barefoot holy man.", { title: "High Septon", death: ep(6, 10) }),
+];
+
+/** Things a viewer learns about a character, keyed by the episode they learn it. */
+export const FACTS: Record<string, [number, string][]> = {
+  eddard: [[ep(1, 2), "Accepts Robert's offer to become Hand of the King."], [ep(1, 7), "Discovers Robert's children are not his; arrested in the throne room."], [ep(1, 9), "Beheaded at Joffrey's command."]],
+  robb: [[ep(1, 8), "Calls the banners and marches south."], [ep(1, 10), "Proclaimed King in the North."], [ep(2, 10), "Breaks his Frey betrothal and marries Talisa."], [ep(3, 9), "Murdered at the Red Wedding."]],
+  catelyn: [[ep(1, 4), "Arrests Tyrion at the inn at the crossroads."], [ep(2, 10), "Frees Jaime Lannister."], [ep(3, 9), "Killed at the Red Wedding."]],
+  jon: [[ep(1, 3), "Arrives at Castle Black."], [ep(1, 7), "Takes his vows; named Lord Commander Mormont's steward."], [ep(3, 5), "Breaks his vows with Ygritte."], [ep(4, 9), "Holds Castle Black against the wildling attack."], [ep(5, 2), "Elected 998th Lord Commander."], [ep(5, 10), "Stabbed by his own brothers."], [ep(6, 2), "Brought back to life by Melisandre."], [ep(6, 9), "Wins the Battle of the Bastards."], [ep(6, 10), "Proclaimed King in the North."], [ep(7, 3), "Meets Daenerys at Dragonstone."]],
+  sansa: [[ep(1, 9), "Forced to watch her father's execution."], [ep(3, 8), "Married to Tyrion."], [ep(4, 2), "Escapes King's Landing with Littlefinger."], [ep(5, 6), "Married to Ramsay Bolton."], [ep(6, 4), "Reunites with Jon at Castle Black."], [ep(6, 9), "Feeds Ramsay to his hounds."]],
+  arya: [[ep(1, 2), "Gets her sword, Needle, from Jon."], [ep(1, 9), "Escapes King's Landing disguised as a boy."], [ep(4, 10), "Sails for Braavos."], [ep(6, 8), "Reclaims her name: 'A girl is Arya Stark.'"], [ep(6, 10), "Avenges the Red Wedding at the Twins."]],
+  bran: [[ep(1, 1), "Pushed from a tower after seeing a secret."], [ep(1, 3), "Wakes from his fall, unable to walk."], [ep(4, 10), "Finds the Three-Eyed Raven."], [ep(6, 5), "Becomes the Three-Eyed Raven's heir as Hodor holds the door."], [ep(7, 3), "Returns to Winterfell."]],
+  rickon: [[ep(3, 9), "Leaves for the Last Hearth with Osha."], [ep(6, 9), "Shot with an arrow by Ramsay."]],
+  daenerys: [[ep(1, 1), "Married to Khal Drogo."], [ep(1, 10), "Walks into the fire and hatches three dragons."], [ep(3, 4), "Takes the Unsullied and burns Astapor's masters."], [ep(4, 3), "Conquers Meereen."], [ep(5, 9), "Flies away on Drogon from the fighting pit."], [ep(6, 4), "Burns the khals and takes the Dothraki."], [ep(6, 10), "Sails for Westeros."], [ep(7, 6), "Loses a dragon beyond the Wall."]],
+  viserys: [[ep(1, 6), "Crowned with molten gold by Drogo."]],
+  tyrion: [[ep(1, 4), "Arrested by Catelyn Stark."], [ep(1, 6), "Wins a trial by combat through Bronn."], [ep(2, 1), "Arrives as acting Hand of the King."], [ep(2, 9), "Leads the defence at the Blackwater."], [ep(4, 2), "Accused of poisoning Joffrey."], [ep(4, 10), "Kills Shae and his father, then flees."], [ep(5, 8), "Becomes Daenerys's adviser."], [ep(6, 10), "Named Hand of the Queen."]],
+  cersei: [[ep(1, 7), "Her twin incest is known; Robert dies."], [ep(5, 10), "Makes her walk of atonement."], [ep(6, 10), "Destroys the Great Sept and takes the Iron Throne."]],
+  jaime: [[ep(1, 1), "Pushes Bran from the tower."], [ep(3, 3), "Loses his sword hand."], [ep(3, 5), "Tells Brienne why he killed the Mad King."]],
+  joffrey: [[ep(1, 10), "Crowned king."], [ep(4, 2), "Poisoned at his own wedding feast."]],
+  robert: [[ep(1, 7), "Mortally wounded by a boar."]],
+  tywin: [[ep(3, 9), "Plotted the Red Wedding with the Freys."], [ep(4, 10), "Killed by Tyrion on the privy."]],
+  stannis: [[ep(2, 9), "Defeated at the Blackwater."], [ep(4, 9), "Arrives to save the Wall."], [ep(5, 9), "Burns his daughter for the Lord of Light."]],
+  renly: [[ep(2, 5), "Killed by a shadow creature."]],
+  theon: [[ep(2, 6), "Seizes Winterfell."], [ep(3, 7), "Held and tortured as a prisoner."], [ep(5, 10), "Escapes with Sansa."], [ep(8, 3), "Dies defending Bran in the godswood."]],
+  margaery: [[ep(4, 2), "Marries Joffrey."], [ep(5, 3), "Marries Tommen."]],
+  olenna: [[ep(7, 3), "Confesses to poisoning Joffrey before drinking poison."]],
+  oberyn: [[ep(4, 8), "Killed by the Mountain in trial by combat."]],
+  ramsay: [[ep(3, 10), "Revealed as Roose Bolton's bastard."], [ep(6, 2), "Murders his father."]],
+  roose: [[ep(3, 9), "Kills Robb at the Red Wedding."]],
+  walder: [[ep(3, 9), "Hosts the Red Wedding."]],
+  gendry: [[ep(1, 7), "Ned learns he is Robert's son."], [ep(8, 4), "Legitimised as Lord of Storm's End."]],
+  varys: [[ep(2, 4), "Works quietly with Tyrion."], [ep(4, 10), "Helps Tyrion escape to Essos."], [ep(6, 10), "Sails west with Daenerys."], [ep(8, 5), "Burned for treason by Daenerys."]],
+  littlefinger: [[ep(1, 7), "Betrays Ned in the throne room."], [ep(4, 3), "Revealed as part of the plot to kill Joffrey."], [ep(4, 7), "Marries Lysa, then pushes her through the Moon Door."], [ep(7, 7), "Tried at Winterfell and executed by Arya."]],
+  pycelle: [[ep(6, 10), "Lured and killed by Qyburn's little birds."]],
+  barristan: [[ep(3, 1), "Joins Daenerys in Astapor."], [ep(5, 4), "Dies fighting the Sons of the Harpy."]],
+  sandor: [[ep(1, 2), "Kills the butcher's boy, Mycah."], [ep(2, 9), "Deserts at the Blackwater."], [ep(4, 10), "Left for dead by Arya after fighting Brienne."], [ep(6, 7), "Found alive, living with a septon."], [ep(8, 5), "Faces his brother at the Red Keep."]],
+  gregor: [[ep(4, 8), "Kills Oberyn but is poisoned."], [ep(5, 10), "Returns, silent, as Qyburn's creation in the Kingsguard."]],
+  qyburn: [[ep(4, 1), "Becomes Cersei's trusted man."], [ep(6, 10), "Named Hand of the Queen."]],
+  shae: [[ep(4, 6), "Testifies against Tyrion."], [ep(4, 10), "Killed by Tyrion."]],
+  bronn: [[ep(1, 6), "Wins Tyrion's trial by combat."], [ep(2, 9), "Fights at the Blackwater; later knighted."], [ep(4, 7), "Refuses to fight the Mountain for Tyrion."]],
+  podrick: [[ep(4, 7), "Sent to serve Brienne."]],
+  brienne: [[ep(2, 5), "Sees Renly die and swears to Catelyn."], [ep(4, 4), "Given Oathkeeper by Jaime."], [ep(5, 10), "Executes Stannis."], [ep(8, 2), "Knighted by Jaime."]],
+  syrio: [[ep(1, 8), "Holds off guards so Arya can flee; his fate is unseen."]],
+  jaqen: [[ep(2, 7), "Helps Arya escape Harrenhal; gives her an iron coin."], [ep(5, 2), "Revealed in Braavos as a Faceless Man."]],
+  davos: [[ep(2, 9), "Survives the wildfire at the Blackwater."], [ep(6, 9), "Fights for Jon at the Battle of the Bastards."], [ep(6, 10), "Exposes Melisandre for Shireen's death."]],
+  melisandre: [[ep(2, 4), "Gives birth to a shadow creature."], [ep(6, 1), "Revealed as centuries old."], [ep(6, 2), "Brings Jon back to life."], [ep(6, 10), "Banished from the North."]],
+  jorah: [[ep(4, 8), "Banished after his spying is revealed."], [ep(5, 5), "Infected with greyscale."], [ep(7, 5), "Returns to Daenerys, cured."]],
+  missandei: [[ep(3, 4), "Freed by Daenerys and joins her council."], [ep(8, 4), "Captured and executed by Cersei."]],
+  greyworm: [[ep(3, 5), "Chooses to keep his name, Grey Worm."], [ep(7, 3), "Takes Casterly Rock."]],
+  daario: [[ep(3, 8), "Kills his captains and joins Daenerys."], [ep(6, 10), "Left behind to keep the peace in Meereen."]],
+  samwell: [[ep(3, 8), "Kills a White Walker with dragonglass."], [ep(6, 10), "Arrives at the Citadel in Oldtown."], [ep(7, 2), "Secretly cures Jorah's greyscale."]],
+  aemon: [[ep(3, 10), "Revealed to be a Targaryen."], [ep(5, 7), "Dies peacefully at Castle Black."]],
+  alliser: [[ep(5, 10), "Leads the mutiny against Jon."], [ep(6, 3), "Hanged by Jon."]],
+  gilly: [[ep(2, 10), "Gives birth to a son at Craster's Keep."], [ep(3, 8), "Flees south with Sam."]],
+  ygritte: [[ep(3, 9), "Turns on Jon when he flees."], [ep(4, 9), "Killed in the attack on Castle Black."]],
+  tormund: [[ep(5, 8), "Fights beside Jon at Hardhome."]],
+  mance: [[ep(4, 10), "Captured by Stannis."], [ep(5, 1), "Burned; Jon grants him a quick death."]],
+  nightking: [[ep(5, 8), "Raises the dead at Hardhome."], [ep(7, 6), "Takes a dragon for the dead."], [ep(8, 3), "Leads the Long Night against Winterfell."]],
+  ravenseer: [[ep(6, 5), "Killed when the Night King enters the cave."]],
+  hodor: [[ep(6, 5), "Holds the door; the meaning of his name is revealed."]],
+  osha: [[ep(6, 4), "Killed by Ramsay."]],
+  jojen: [[ep(4, 10), "Killed by wights near the weirwood."]],
+  meera: [[ep(7, 4), "Leaves Winterfell to return to her family."]],
+  thoros: [[ep(3, 6), "Revealed to have raised Beric from death six times."], [ep(7, 6), "Dies of a bear attack beyond the Wall."]],
+  beric: [[ep(8, 3), "Sacrifices himself to protect Arya."]],
+  highsparrow: [[ep(5, 7), "Arrests Queen Margaery."], [ep(5, 10), "Sentences Cersei to her walk of atonement."]],
+};

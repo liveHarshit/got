@@ -41,3 +41,21 @@ describe("no spoilers in episode notes", () => {
   it("S7E7 reveals Rhaegar as Jon's parent", () =>
     expect(getChanges(ep(7, 7)).reveals).toContain("Rhaegar Targaryen is revealed as Jon Snow's parent"));
 });
+
+import { getCodex } from "@/lib/tree";
+const entry = (at: number, id: string) => getCodex(at).find((p) => p.id === id);
+describe("character guide", () => {
+  it("includes non-family characters once met", () => {
+    expect(entry(ep(1, 2), "varys")).toBeUndefined();
+    expect(entry(ep(1, 3), "varys")!.group).toBe("Small Council");
+  });
+  it("Hodor alive at S6E4, dead at S6E5", () => {
+    expect(entry(ep(6, 4), "hodor")!.dead).toBe(false);
+    expect(entry(ep(6, 5), "hodor")!.dead).toBe(true);
+  });
+  it("hides future facts", () => {
+    expect(entry(ep(4, 6), "littlefinger")!.facts.some((f) => f.text.includes("Moon Door"))).toBe(false);
+    expect(entry(ep(4, 7), "littlefinger")!.facts.some((f) => f.text.includes("Moon Door"))).toBe(true);
+  });
+  it("aliased Ramsay has no facts before reveal", () => expect(entry(ep(3, 9), "ramsay")!.facts).toEqual([]));
+});

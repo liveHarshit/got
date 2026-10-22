@@ -1,4 +1,4 @@
-/** Free-licensed cast photos (Wikimedia Commons) used where no show still was available. */
+/** Photo attribution: show imagery via TVMaze, plus Wikimedia cast-photo fallbacks. */
 export const PHOTO_CREDITS: Record<string, { actor: string; author: string; license: string; source: string }> = {
  "lyanna": {
   "actor": "Aisling Franciosi",
@@ -113,5 +113,230 @@ export const PHOTO_CREDITS: Record<string, { actor: string; author: string; lice
   "author": "gdcgraphics at https://www.flickr.com/photos/gdcgraphics/",
   "license": "CC BY-SA 2.0",
   "source": "https://commons.wikimedia.org/wiki/File:AlexanderSiddig09TIFF.jpg"
- }
+ },
+
+
+  "varys": {
+    "actor": "Conleth Hill",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15617/game-of-thrones-lord-varys"
+  },
+  "littlefinger": {
+    "actor": "Aidan Gillen",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15615/game-of-thrones-petyr-littlefinger-baelish"
+  },
+  "pycelle": {
+    "actor": "Julian Glover",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15658/game-of-thrones-grand-maester-pycelle"
+  },
+  "barristan": {
+    "actor": "Ian McElhinney",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/105013/game-of-thrones-ser-barristan-selmy"
+  },
+  "sandor": {
+    "actor": "Rory McCann",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15603/game-of-thrones-sandor-clegane"
+  },
+  "gregor": {
+    "actor": "Conan Stevens",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15665/game-of-thrones-ser-gregor-clegane"
+  },
+  "qyburn": {
+    "actor": "Anton Lesser",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15970/game-of-thrones-qyburn"
+  },
+  "shae": {
+    "actor": "Sibel Kekilli",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15628/game-of-thrones-shae"
+  },
+  "bronn": {
+    "actor": "Jerome Flynn",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15621/game-of-thrones-bronn"
+  },
+  "podrick": {
+    "actor": "Daniel Portman",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15726/game-of-thrones-podrick-payne"
+  },
+  "brienne": {
+    "actor": "Gwendoline Christie",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15618/game-of-thrones-brienne-of-tarth"
+  },
+  "syrio": {
+    "actor": "Miltos Yerolemou",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15659/game-of-thrones-syrio-forel"
+  },
+  "jaqen": {
+    "actor": "Tom Wlaschiha",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15730/game-of-thrones-jaqen-hghar"
+  },
+  "davos": {
+    "actor": "Liam Cunningham",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15625/game-of-thrones-davos-seaworth"
+  },
+  "melisandre": {
+    "actor": "Carice van Houten",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15616/game-of-thrones-melisandre"
+  },
+  "jorah": {
+    "actor": "Iain Glen",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15606/game-of-thrones-ser-jorah-mormont"
+  },
+  "missandei": {
+    "actor": "Nathalie Emmanuel",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15974/game-of-thrones-missandei"
+  },
+  "greyworm": {
+    "actor": "Jacob Anderson",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15997/game-of-thrones-grey-worm"
+  },
+  "daario": {
+    "actor": "Michiel Huisman",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/16007/game-of-thrones-daario-naharis"
+  },
+  "samwell": {
+    "actor": "John Bradley",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15623/game-of-thrones-samwell-tarly"
+  },
+  "aemon": {
+    "actor": "Peter Vaughan",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15660/game-of-thrones-maester-aemon"
+  },
+  "alliser": {
+    "actor": "Owen Teale",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/16023/game-of-thrones-alliser-thorne"
+  },
+  "gilly": {
+    "actor": "Hannah Murray",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15720/game-of-thrones-gilly"
+  },
+  "ygritte": {
+    "actor": "Rose Leslie",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15627/game-of-thrones-ygritte"
+  },
+  "tormund": {
+    "actor": "Kristofer Hivju",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15624/game-of-thrones-tormund-giantsbane"
+  },
+  "mance": {
+    "actor": "Ciarán Hinds",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15971/game-of-thrones-mance-rayder"
+  },
+  "nightking": {
+    "actor": "Richard Brake",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/121761/game-of-thrones-the-night-king"
+  },
+  "hodor": {
+    "actor": "Kristian Nairn",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15637/game-of-thrones-hodor"
+  },
+  "osha": {
+    "actor": "Natalia Tena",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/49542/game-of-thrones-osha"
+  },
+  "meera": {
+    "actor": "Ellie Kendrick",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15976/game-of-thrones-meera-reed"
+  },
+  "jojen": {
+    "actor": "Thomas Brodie Sangster",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15981/game-of-thrones-jojen-reed"
+  },
+  "thoros": {
+    "actor": "Paul Kaye",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15979/game-of-thrones-thoros-of-myr"
+  },
+  "beric": {
+    "actor": "Richard Dormer",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/49570/game-of-thrones-lord-beric-dondarrion"
+  },
+  "highsparrow": {
+    "actor": "Jonathan Pryce",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/105050/game-of-thrones-high-sparrow"
+  },
+  "kevan": {
+    "actor": "Ian Gelder",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15759/game-of-thrones-ser-kevan-lannister"
+  },
+  "walder": {
+    "actor": "David Bradley",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/15708/game-of-thrones-lord-walder-frey"
+  },
+  "ravenseer": {
+    "actor": "Max Von Sydow",
+    "author": "HBO / TVMaze",
+    "license": "© HBO",
+    "source": "https://www.tvmaze.com/characters/276863/game-of-thrones-three-eyed-raven"
+  }
+
 };

@@ -107,3 +107,49 @@ export function getRelatives(state: TreeState, id: string) {
     .map((l) => find(l.source === id ? l.target : l.source));
   return { parents, children, spouses };
 }
+
+import { FIGURES, FACTS } from "@/data/people";
+import { SEASONS } from "@/data/got";
+
+export interface CodexEntry extends TreePerson {
+  /** Affiliation for characters outside the great houses. */
+  group?: string;
+  /** Known facts up to the chosen episode, oldest first. */
+  facts: { at: number; text: string }[];
+  inTree: boolean;
+}
+
+/** "S3E9" label for an absolute episode. */
+export function epLabel(at: number): string {
+  let n = at;
+  for (let s = 0; s < SEASONS.length; s++) {
+    if (n <= SEASONS[s]!.length) return `S${s + 1}E${n}`;
+    n -= SEASONS[s]!.length;
+  }
+  return "";
+}
+
+const factsFor = (id: string, at: number) =>
+  (FACTS[id] ?? []).filter(([when]) => when <= at).map(([when, text]) => ({ at: when, text }));
+
+/** Every character a viewer has met by episode `at`, with only what they know so far. */
+export function getCodex(at: number): CodexEntry[] {
+  const family: CodexEntry[] = CHARACTERS.filter((ch) => ch.first <= at).map((ch) => {
+    const p = toPerson(ch, at);
+    return { ...p, inTree: true, facts: p.house ? factsFor(ch.id, at) : [] };
+  });
+  const others: CodexEntry[] = FIGURES.filter((f) => f.first <= at).map((f) => ({
+    id: f.id,
+    charId: f.id,
+    unknown: false,
+    name: f.name,
+    house: null,
+    group: f.group,
+    dead: f.death !== undefined && f.death <= at,
+    ...(f.title ? { title: f.title } : {}),
+    bio: f.bio,
+    inTree: false,
+    facts: factsFor(f.id, at),
+  }));
+  return [...family, ...others];
+}

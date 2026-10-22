@@ -2,18 +2,19 @@ import { createFileRoute, useNavigate, ClientOnly } from "@tanstack/react-router
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, X, Search, Info, Skull, Sparkles, UserPlus } from "lucide-react";
 import { SEASONS, HOUSES, ep, type HouseId } from "@/data/got";
-import { getTreeState, getChanges, getRelatives, type TreePerson } from "@/lib/tree";
+import { getTreeState, getChanges, getRelatives, getCodex, epLabel, type TreePerson, type CodexEntry } from "@/lib/tree";
+import { CharacterGuide } from "@/components/CharacterGuide";
 import { FamilyTree, Portrait, houseText } from "@/components/FamilyTree";
 import { PHOTO_CREDITS } from "@/data/credits";
 
-type Search = { s?: number; e?: number };
+type Search = { s?: number; e?: number; v?: "cast" };
 
 export const Route = createFileRoute("/")({
   validateSearch: (raw: Record<string, unknown>): Search => {
     const s = Number(raw["s"]), e = Number(raw["e"]);
     if (!s || s < 1 || s > 8) return {};
     const max = SEASONS[s - 1]!.length;
-    return { s, e: e >= 1 && e <= max ? e : 1 };
+    return { s, e: e >= 1 && e <= max ? e : 1, ...(raw["v"] === "cast" ? { v: "cast" as const } : {}) };
   },
   head: () => ({
     meta: [
@@ -43,9 +44,13 @@ function Index() {
   const at = ep(s, e);
   const state = useMemo(() => getTreeState(at), [at]);
   const changes = useMemo(() => getChanges(at), [at]);
-  const selected = state.people.find((p) => p.id === selectedId) ?? null;
+  const codex = useMemo(() => getCodex(at), [at]);
+  const view = search.v === "cast" ? "cast" : "tree";
+  const selected: CodexEntry | TreePerson | null =
+    codex.find((p) => p.id === selectedId) ?? state.people.find((p) => p.id === selectedId) ?? null;
 
-  const go = (ns: number, ne: number) => navigate({ search: { s: ns, e: ne } });
+  const go = (ns: number, ne: number) => navigate({ search: (prev) => ({ ...prev, s: ns, e: ne }) });
+  const setView = (v: "tree" | "cast") => navigate({ search: { s, e, ...(v === "cast" ? { v } : {}) } });
   const step = (d: number) => {
     let ns = s, ne = e + d;
     if (ne < 1) { if (ns === 1) return; ns--; ne = SEASONS[ns - 1]!.length; }
@@ -55,8 +60,8 @@ function Index() {
 
   useEffect(() => { setShowChanges(true); }, [at]);
   useEffect(() => {
-    if (selectedId && !state.people.some((p) => p.id === selectedId)) setSelectedId(null);
-  }, [state, selectedId]);
+    if (selectedId && !state.people.some((p) => p.id === selectedId) && !codex.some((p) => p.id === selectedId)) setSelectedId(null);
+  }, [state, codex, selectedId]);
   useEffect(() => {
     if (!started) return;
     const onKey = (ev: KeyboardEvent) => {
@@ -71,7 +76,7 @@ function Index() {
 
   const houses = (Object.keys(HOUSES) as HouseId[]).filter((h) => state.people.some((p) => p.house === h));
   const matches = query.trim()
-    ? state.people.filter((p) => !p.unknown && p.house && p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 6)
+    ? codex.filter((p) => (p.house || p.group) && p.name.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
     : [];
   const hasChanges = changes.newcomers.length + changes.deaths.length + changes.reveals.length > 0;
 
@@ -101,13 +106,13 @@ function Index() {
               {matches.map((p) => (
                 <li key={p.id}>
                   <button
-                    onClick={() => { setFocus(null); setSelectedId(p.id); setQuery(""); }}
+                    onClick={() => { setFocus(null); setSelectedId(p.id); setQuery(""); if (!p.inTree && view === "tree") setView("cast"); }}
                     className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-accent"
                   >
                     <Portrait person={p} className="h-8 w-8 shrink-0" />
                     <span className="flex flex-col">
                       <span className="font-display text-xs">{p.name}</span>
-                      <span className={`text-[10px] uppercase tracking-widest ${houseText[p.house!]}`}>{HOUSES[p.house!].name}</span>
+                      <span className={`text-[10px] uppercase tracking-widest ${p.house ? houseText[p.house] : "text-muted-foreground"}`}>{p.house ? HOUSES[p.house].name : p.group}</span>
                     </span>
                   </button>
                 </li>
@@ -118,18 +123,32 @@ function Index() {
       </header>
 
       <div className="z-20 flex items-center gap-2 overflow-x-auto border-b bg-background/60 px-4 py-2">
-        <HouseChip active={focus === null} onClick={() => setFocus(null)}>All houses</HouseChip>
-        {houses.map((h) => (
-          <HouseChip key={h} house={h} active={focus === h} onClick={() => setFocus(focus === h ? null : h)}>{HOUSES[h].name}</HouseChip>
-        ))}
+        <div role="tablist" className="mr-2 flex shrink-0 border">
+          {([["tree", "Family tree"], ["cast", `Characters · ${codex.length}`]] as const).map(([v, label]) => (
+            <button key={v} role="tab" aria-selected={view === v} onClick={() => setView(v)}
+              className={`px-3 py-1 font-display text-[10px] uppercase tracking-widest ${view === v ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {view === "tree" && <>
+          <HouseChip active={focus === null} onClick={() => setFocus(null)}>All houses</HouseChip>
+          {houses.map((h) => (
+            <HouseChip key={h} house={h} active={focus === h} onClick={() => setFocus(focus === h ? null : h)}>{HOUSES[h].name}</HouseChip>
+          ))}
+        </>}
       </div>
 
       <div className="relative flex-1 overflow-hidden">
+        {view === "cast" ? (
+          <CharacterGuide entries={codex} selectedId={selectedId} onSelect={setSelectedId} />
+        ) : (
         <ClientOnly fallback={<div className="p-8 font-display text-muted-foreground">Unrolling the scrolls…</div>}>
           <FamilyTree state={state} focusHouse={focus} selectedId={selectedId} onSelect={(p) => setSelectedId(p.id)} />
         </ClientOnly>
+        )}
 
-        {focus && (
+        {view === "tree" && focus && (
           <div className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 text-center">
             <div className={`font-display text-2xl text-glow ${houseText[focus]}`}>House {HOUSES[focus].name}</div>
             <div className="text-sm italic text-muted-foreground">“{HOUSES[focus].words}”</div>
@@ -137,7 +156,7 @@ function Index() {
         )}
 
         {/* Episode changes */}
-        {hasChanges && showChanges && (
+        {view === "tree" && hasChanges && showChanges && (
           <div className="absolute bottom-4 left-16 z-10 w-72 max-w-[calc(100%-5rem)] border bg-popover/95 p-4 shadow-xl backdrop-blur animate-in fade-in slide-in-from-bottom-4">
             <div className="mb-2 flex items-center justify-between">
               <span className="font-display text-xs uppercase tracking-widest text-primary">In this episode</span>
@@ -179,7 +198,7 @@ function Index() {
         {selected && (
           <PersonDrawer
             person={selected}
-            relatives={getRelatives(state, selected.id)}
+            relatives={state.people.some((p) => p.id === selected.id) ? getRelatives(state, selected.id) : null}
             onClose={() => setSelectedId(null)}
             onPick={(id) => setSelectedId(id)}
           />
@@ -190,12 +209,14 @@ function Index() {
 }
 
 function PersonDrawer({ person, relatives, onClose, onPick }: {
-  person: TreePerson;
-  relatives: ReturnType<typeof getRelatives>;
+  person: CodexEntry | TreePerson;
+  relatives: ReturnType<typeof getRelatives> | null;
   onClose: () => void;
   onPick: (id: string) => void;
 }) {
-  const groups: [string, TreePerson[]][] = [["Parents", relatives.parents], ["Spouses", relatives.spouses], ["Children", relatives.children]];
+  const groups: [string, TreePerson[]][] = relatives ? [["Parents", relatives.parents], ["Spouses", relatives.spouses], ["Children", relatives.children]] : [];
+  const group = "group" in person ? person.group : undefined;
+  const facts = "facts" in person ? person.facts : [];
   return (
     <aside className="absolute right-0 top-0 z-30 flex h-full w-full max-w-sm flex-col overflow-y-auto border-l bg-popover shadow-2xl animate-in slide-in-from-right">
       <div className="relative">
@@ -209,7 +230,8 @@ function PersonDrawer({ person, relatives, onClose, onPick }: {
           <p className={`font-display text-xs uppercase tracking-widest ${houseText[person.house]}`}>
             House {HOUSES[person.house].name} · <span className="normal-case italic text-muted-foreground">“{HOUSES[person.house].words}”</span>
           </p>
-        ) : <p className="font-display text-xs uppercase tracking-widest text-muted-foreground">Identity unknown</p>}
+        ) : group ? <p className="font-display text-xs uppercase tracking-widest text-muted-foreground">{group}</p>
+        : <p className="font-display text-xs uppercase tracking-widest text-muted-foreground">Identity unknown</p>}
         <div className="flex flex-wrap gap-2 text-xs">
           {person.title && <span className="border px-2 py-1">{person.title}</span>}
           <span className={`border px-2 py-1 ${person.dead ? "border-destructive text-destructive" : ""}`}>
@@ -217,7 +239,22 @@ function PersonDrawer({ person, relatives, onClose, onPick }: {
           </span>
         </div>
         <p className="text-lg leading-relaxed text-muted-foreground">{person.bio}</p>
-        {person.charId && person.house && PHOTO_CREDITS[person.charId] && (
+        {facts.length > 0 && (
+          <div>
+            <h3 className="mb-2 mt-2 font-display text-xs uppercase tracking-widest text-foreground">The story so far</h3>
+            <ol className="space-y-2 border-l border-primary/40 pl-4">
+              {facts.map((f) => (
+                <li key={f.at + f.text} className="relative">
+                  <span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-primary" />
+                  <span className="font-display text-[10px] tracking-widest text-primary">{epLabel(f.at)}</span>
+                  <p className="text-sm text-foreground/90">{f.text}</p>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-3 text-[11px] italic text-muted-foreground">Only events up to your chosen episode are shown.</p>
+          </div>
+        )}
+        {person.charId && (person.house || group) && PHOTO_CREDITS[person.charId] && (
           <p className="text-xs text-muted-foreground">
             Played by <span className="text-foreground">{PHOTO_CREDITS[person.charId]!.actor}</span> · Photo{" "}
             <a href={PHOTO_CREDITS[person.charId]!.source} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-primary">

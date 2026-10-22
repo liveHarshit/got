@@ -10,3 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Spoiler logic lives in src/lib/tree.ts (getTreeState) driven by episode-indexed data in src/data/got.ts; keep UI free of reveal rules so tests in src/test/tree.test.ts cover them.
+- GitHub Pages build: `GH_PAGES=1` in vite.config.ts switches to static SPA output under /got; .github/workflows/pages.yml builds and deploys it, because Pages serves only static files.
+- Downloaded character portraits use CDN asset pointers resolved by the shared portrait lookup; identity gating stays in the existing Portrait renderer so photos cannot expose unrevealed characters.
